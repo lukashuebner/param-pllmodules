@@ -51,6 +51,8 @@ typedef struct spr_params
   double bl_max;
   int smoothings;
   int brlen_opt_method;
+  int brlen_opt_radius;
+  double spr_lheps;
   double * brlen_buf[BRLEN_BUF_COUNT];
 } pllmod_search_params_t;
 
@@ -397,7 +399,8 @@ static double algo_optimize_bl_triplet(pll_unode_t * node,
                                        double smooth_factor)
 {
   return algo_optimize_bl_iterative(node, treeinfo, params,
-                                    1, 0.1, smooth_factor);
+                                    params->brlen_opt_radius, 
+                                    params->spr_lheps, smooth_factor);
 }
 
 static double algo_optimize_bl_all(pllmod_treeinfo_t * treeinfo,
@@ -975,7 +978,9 @@ PLL_EXPORT double pllmod_algo_spr_round(pllmod_treeinfo_t * treeinfo,
                                         int smoothings,
                                         double epsilon,
                                         cutoff_info_t * cutoff_info,
-                                        double subtree_cutoff)
+                                        double subtree_cutoff,
+                                        int brlen_opt_radius,
+                                        double spr_lheps)
 {
   unsigned int i;
   double loglh, best_lh;
@@ -1015,6 +1020,8 @@ PLL_EXPORT double pllmod_algo_spr_round(pllmod_treeinfo_t * treeinfo,
   params.bl_max = bl_max;
   params.smoothings = smoothings;
   params.brlen_opt_method = brlen_opt_method;
+  params.spr_lheps = spr_lheps;
+  params.brlen_opt_radius = brlen_opt_radius;
 
   brlen_unlinked = (treeinfo->brlen_linkage == PLLMOD_COMMON_BRLEN_UNLINKED) ? 1 : 0;
 
